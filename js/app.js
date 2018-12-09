@@ -20,6 +20,7 @@ $(document).ready(function(){
   ];
 
   let timer = new GameTimer();
+  let previewSetTimeoutId;
 
   let base = document.getElementById('base');
   let starsList = document.getElementById('stars');
@@ -27,11 +28,10 @@ $(document).ready(function(){
   let movesCntr = document.getElementById('moves');
   let timerCntr = document.getElementById('timer');
 
-  let time_results = document.getElementById('time_results');
-  let moves_results = document.getElementById('moves_results');
-  
-  let modal = document.getElementById('themodal');
-  let modalObj = M.Modal.getInstance(modal);
+  let timeResults = document.getElementById('timeResults');
+  let movesResults = document.getElementById('movesResults');
+  let starRating = document.getElementById('starRating');
+
   let modal_reset_btn = document.getElementById('m_btn_reset');
 
   let moves = 0;
@@ -169,7 +169,6 @@ $(document).ready(function(){
 
   function start() {
     generateCards();
-    activateCards();
     previewCards();
     console.log('game started.');
   }
@@ -178,8 +177,9 @@ $(document).ready(function(){
   function gameOver() {
     isGameOver = true;
     timer.stopTimer();
-    moves_results.innerText = moves;
-    time_results.innerText = timer.getTimeStr();
+    movesResults.innerText = moves;
+    timeResults.innerText = timer.getTimeStr();
+    starRating.innerHTML = starsList.innerHTML;
     $('#themodal').modal('toggle')
   }
 
@@ -188,9 +188,10 @@ $(document).ready(function(){
     if(e && e.preventDefault) { e.preventDefault(); }
 
     // clears board then regenerate cards
+    clearTimeout(previewSetTimeoutId);
     clearBase();
     generateCards();
-    activateCards();
+    // activateCards();
     previewCards();
     timer.resetTimer();
     $('#themodal').modal('hide')
@@ -215,10 +216,11 @@ $(document).ready(function(){
     document.querySelectorAll('.card').forEach(function(card) {
       card.classList.add('open', 'show');
     });
-    setTimeout(function(){
+    previewSetTimeoutId = setTimeout(function(){
       document.querySelectorAll('.card').forEach(function(card) {
         card.classList.remove('open', 'show');
       });
+      activateCards();
     }, 4000);
   }
   start();
